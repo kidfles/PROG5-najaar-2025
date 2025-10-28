@@ -18,9 +18,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Place)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Logo)
-            </th>
+            <th>Logo</th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
@@ -46,7 +44,10 @@
                 @Html.DisplayFor(modelItem => item.Place)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Logo)
+                @if (!string.IsNullOrEmpty(item.Logo))
+                {
+                    <img src="@item.Logo" alt="@item.Name logo" style="height:32px" />
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Description)

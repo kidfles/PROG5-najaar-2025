@@ -53,7 +53,7 @@ public sealed class ApplicationDbContext : DbContext
             Id = 1,
             Name = "Lowlands",
             Place = "Biddinghuizen",
-            Logo = null,
+            Logo = "/img/logos/lowlands.svg",
             Description = "Three-day music festival.",
             BasicPrice = 199.00m,
             StartDate = new DateOnly(2025, 8, 22),
