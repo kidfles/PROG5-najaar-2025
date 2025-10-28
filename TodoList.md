@@ -101,12 +101,12 @@ Phase 9 — Should/Nice Haves
 Phase 10 — Testing & Demo
 
 - [ ] Manual test matrix
-  - [ ] CRUD for Festival and Item
-  - [ ] Create/Update Package; select/deselect items per type; set quantities; recompute totals correctly on each “Kies”
-  - [ ] Verify 0/1 item per ItemType rule
-  - [ ] Delete with FK references shows friendly message
-  - [ ] Item list filters and sorts correctly
-  - [ ] Menu navigates to all lists; Package list limited to selected Festival
+  - [x] CRUD for Festival and Item
+  - [x] Create/Update Package; select/deselect items per type; set quantities; recompute totals correctly on each “Kies”
+  - [x] Verify 0/1 item per ItemType rule
+  - [x] Delete with FK references shows friendly message
+  - [x] Item list filters and sorts correctly
+  - [x] Menu navigates to all lists; Package list limited to selected Festival
 
 - [ ] Screenshots: Ticket page, lists, filters
 
