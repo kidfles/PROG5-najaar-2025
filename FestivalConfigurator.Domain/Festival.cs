@@ -23,11 +23,14 @@ public sealed class Festival
     public string? Description { get; set; }
 
     [Display(Name = "Basisprijs")]
+    [DataType(DataType.Currency)]
     public decimal BasicPrice { get; set; }
 
     [Display(Name = "Startdatum")]
+    [DataType(DataType.Date)]
     public DateOnly StartDate { get; set; }
     [Display(Name = "Einddatum")]
+    [DataType(DataType.Date)]
     public DateOnly EndDate   { get; set; }
 
     public ICollection<Package> Packages { get; set; } = new List<Package>();

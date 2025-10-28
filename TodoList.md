@@ -86,15 +86,15 @@ Phase 7 — Language, UX, and Polish
 
 Phase 8 — LINQ Queries & Performance
 
-- [ ] Use LINQ for all data queries (group Items by ItemType, filter, sort)
+- [x] Use LINQ for all data queries (group Items by ItemType, filter, sort)
 
-- [ ] Eager loading where appropriate for Ticket view (Include/ThenInclude)
+- [x] Eager loading where appropriate for Ticket view (Include/ThenInclude)
 
 Phase 9 — Should/Nice Haves
 
-- [ ] DataAnnotations (Display names in Dutch, formatting for money/dates) (Should Have)
+- [x] DataAnnotations (Display names in Dutch, formatting for money/dates) (Should Have)
 
-- [ ] Fluent API refinements (constraints, indexes) (Should Have)
+- [x] Fluent API refinements (constraints, indexes) (Should Have)
 
 - [ ] Optional tools: ReSharper usage, Rider (Allowed)
 

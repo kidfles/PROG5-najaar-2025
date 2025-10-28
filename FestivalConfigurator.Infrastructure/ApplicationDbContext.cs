@@ -43,6 +43,12 @@ public sealed class ApplicationDbContext : DbContext
         b.Entity<Festival>().Property(x => x.StartDate).HasColumnType("date");
         b.Entity<Festival>().Property(x => x.EndDate).HasColumnType("date");
 
+        // Indexes
+        b.Entity<Festival>()
+            .HasIndex(x => x.Name);
+        b.Entity<Item>()
+            .HasIndex(x => new { x.ItemType, x.Name });
+
         // Disable cascade deletes globally
         foreach (var fk in b.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             fk.DeleteBehavior = DeleteBehavior.Restrict;

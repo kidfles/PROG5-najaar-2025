@@ -14,6 +14,7 @@ public sealed class Item
     public ItemType ItemType { get; set; }
 
     [Display(Name = "Prijs")]
+    [DataType(DataType.Currency)]
     public decimal Price { get; set; }
 }
 
