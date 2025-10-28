@@ -1,66 +1,66 @@
 ✅ Implementation Plan (Markdown TODOs)
 Phase 0 — Scope & Environment
 
-- [ ] Confirm scope and constraints (ASP.NET Core 8/9, EF Core Code-First, SQL Server, no auth, no JS/AJAX, no cascade delete, custom PACKAGE ticket view, Dutch UI; code/DB in English).
+- [x] Confirm scope and constraints (ASP.NET Core 8/9, EF Core Code-First, SQL Server, no auth, no JS/AJAX, no cascade delete, custom PACKAGE ticket view, Dutch UI; code/DB in English).
 
-- [ ] Install tools (Visual Studio 2022 or Rider, .NET SDK 8/9, SQL Server + SSMS v21).
+- [x] Install tools (Visual Studio 2022 or Rider, .NET SDK 8/9, SQL Server + SSMS v21).
 
-- [ ] Create solution structure
-  - [ ] Web project: FestivalConfigurator.Web (ASP.NET Core MVC)
-  - [ ] Class library: FestivalConfigurator.Domain (entities, enums)
-  - [ ] Optional library: FestivalConfigurator.Infrastructure (EF Core DbContext, configs)
+- [x] Create solution structure
+  - [x] Web project: FestivalConfigurator.Web (ASP.NET Core MVC)
+  - [x] Class library: FestivalConfigurator.Domain (entities, enums)
+  - [x] Optional library: FestivalConfigurator.Infrastructure (EF Core DbContext, configs)
 
-- [ ] Set up connection string in appsettings.json for SQL Server (local dev)
+- [x] Set up connection string in appsettings.json for SQL Server (local dev)
 
 - [ ] Add Bootstrap for responsive, good-looking UI (Nice to Have)
 
 Phase 1 — Domain Model & EF Core
 
-- [ ] Define enum ItemType with exactly 6 values: Camping, Food_and_Drinks, Parking, Merchandise, VIPAccess, Other
+- [x] Define enum ItemType with exactly 6 values: Camping, Food_and_Drinks, Parking, Merchandise, VIPAccess, Other
 
-- [ ] Create entities in Domain library (English names)
-  - [ ] Festival (Name, Place, Logo, Description, BasicPrice, StartDate, EndDate, ICollection<Package>)
-  - [ ] Package (Id, FestivalId FK, Name, ICollection<PackageItem>)
-  - [ ] Item (Id, Name, ItemType, Price)
-  - [ ] PackageItem (PackageId, ItemId, Quantity) — join entity
+- [x] Create entities in Domain library (English names)
+  - [x] Festival (Name, Place, Logo, Description, BasicPrice, StartDate, EndDate, ICollection<Package>)
+  - [x] Package (Id, FestivalId FK, Name, ICollection<PackageItem>)
+  - [x] Item (Id, Name, ItemType, Price)
+  - [x] PackageItem (PackageId, ItemId, Quantity) — join entity
 
-- [ ] Create ApplicationDbContext in Infrastructure (or Web) with DbSets and relationships
+- [x] Create ApplicationDbContext in Infrastructure (or Web) with DbSets and relationships
 
-- [ ] Configure Fluent API: keys, relationships, decimal precision for money, and DeleteBehavior.Restrict to forbid cascade delete
+- [x] Configure Fluent API: keys, relationships, decimal precision for money, and DeleteBehavior.Restrict to forbid cascade delete
 
-- [ ] Add initial migration and update database
+- [x] Add initial migration and update database
 
 Phase 2 — Seed Data
 
-- [ ] Implement seeding (on first DB creation)
-  - [ ] 1 Festival with realistic dates and BasicPrice
-  - [ ] 2 Packages attached to that Festival
-  - [ ] At least 3 Items per ItemType (total ≥ 18)
+- [x] Implement seeding (on first DB creation)
+  - [x] 1 Festival with realistic dates and BasicPrice
+  - [x] 2 Packages attached to that Festival
+  - [x] At least 3 Items per ItemType (total ≥ 18)
   - [ ] Optionally seed ItemType icons & Festival logo references
 
-- [ ] Re-run migrations if needed and verify seed presence
+- [x] Re-run migrations if needed and verify seed presence
 
 Phase 3 — Controllers & CRUD (Scaffolding where allowed)
 
-- [ ] Add navigation menu: FESTIVAL, PACKAGE, ITEM. Menu routes to their list pages
+- [x] Add navigation menu: FESTIVAL, PACKAGE, ITEM. Menu routes to their list pages
 
-- [ ] FESTIVAL: Scaffold Controller + Views (Index/List, Create, Edit, Delete, Details). Show relevant columns; enable per-row actions
+- [x] FESTIVAL: Scaffold Controller + Views (Index/List, Create, Edit, Delete, Details). Show relevant columns; enable per-row actions
 
-- [ ] ITEM: Scaffold Controller + Views with list filter by ItemType and sorting by Type/Name/Price; per-row actions
+- [x] ITEM: Scaffold Controller + Views with list filter by ItemType and sorting by Type/Name/Price; per-row actions
 
-- [ ] PACKAGE list per Festival: Implement page that lists packages for selected Festival, with Create/Edit/Delete and link to Ticket view (custom Ticket view must be hand-built)
+- [x] PACKAGE list per Festival: Implement page that lists packages for selected Festival, with Create/Edit/Delete and link to Ticket view (custom Ticket view must be hand-built)
 
 Phase 4 — ViewModels & Ticket (CUSTOM, no scaffolding)
 
-- [ ] Design Ticket ViewModel (for reading & editing a Package)
-  - [ ] Include Festival info (all fields)
-  - [ ] Six panels (one per ItemType) each showing: type name + icon, selected Item or “geen geselecteerd”, unit price, quantity, computed line total, dropdown of available Items of that type, quantity input, and a “Kies” (select/deselect) button
+- [x] Design Ticket ViewModel (for reading & editing a Package)
+  - [x] Include Festival info (all fields)
+  - [x] Six panels (one per ItemType) each showing: type name + icon, selected Item or “geen geselecteerd”, unit price, quantity, computed line total, dropdown of available Items of that type, quantity input, and a “Kies” (select/deselect) button
 
-- [ ] Implement Ticket GET: fetch Package + Festival + selected items + item catalogs grouped by ItemType (LINQ)
+- [x] Implement Ticket GET: fetch Package + Festival + selected items + item catalogs grouped by ItemType (LINQ)
 
-- [ ] Implement Ticket POST (server-side): handle “Kies” actions to select/deselect an Item per ItemType, update PackageItem rows, and recompute totals; re-render the Ticket (full postbacks; no JS/AJAX)
+- [x] Implement Ticket POST (server-side): handle “Kies” actions to select/deselect an Item per ItemType, update PackageItem rows, and recompute totals; re-render the Ticket (full postbacks; no JS/AJAX)
 
-- [ ] Compute totals: PackageTotal = Festival.BasicPrice + Σ(Item.Price × Quantity); recalc on each “Kies” press
+- [x] Compute totals: PackageTotal = Festival.BasicPrice + Σ(Item.Price × Quantity); recalc on each “Kies” press
 
 - [ ] Enforce rule: max 1 Item per ItemType per Package (0 or 1). Validate server-side logic accordingly
 

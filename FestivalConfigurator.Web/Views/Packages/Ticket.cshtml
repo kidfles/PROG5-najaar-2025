@@ -1,0 +1,94 @@
+@model FestivalConfigurator.Web.Models.TicketViewModel
+@using FestivalConfigurator.Web.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = $"Ticket — {Model.PackageName}";
+}
+
+<div class="container py-3">
+    <div class="row mb-3">
+        <div class="col">
+            <h2>Ticket voor @Model.FestivalName <small class="text-muted">(@Model.PackageName)</small></h2>
+            <div class="text-muted">@Model.FestivalPlace • @Model.StartDate.ToString("dd-MM-yyyy") – @Model.EndDate.ToString("dd-MM-yyyy")</div>
+        </div>
+        <div class="col-auto text-end">
+            <div class="fw-bold">Basisprijs: @Model.BasicPrice.ToString("C")</div>
+            <div class="fs-5">Totaal: <span class="fw-bold">@Model.PackageTotal.ToString("C")</span></div>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+        @foreach (var panel in Model.Panels)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header d-flex align-items-center gap-2">
+                        @if (!string.IsNullOrEmpty(panel.IconPath))
+                        {
+                            <img src="@panel.IconPath" alt="@panel.TypeDisplay" width="24" height="24" />
+                        }
+                        <strong>@panel.TypeDisplay</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <div class="text-muted">Geselecteerd:</div>
+                            <div>
+                                @if (panel.SelectedItemId is null)
+                                {
+                                    <em>geen geselecteerd</em>
+                                }
+                                else
+                                {
+                                    <span>@panel.SelectedItemName</span>
+                                }
+                            </div>
+                        </div>
+
+                        <form asp-action="Ticket" asp-controller="Packages" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="PackageId" value="@Model.PackageId" />
+                            <input type="hidden" name="Type" value="@panel.Type" />
+
+                            <div class="mb-2">
+                                <label class="form-label">Kies optie</label>
+                                <select class="form-select" name="ItemId">
+                                    <option value="">-- maak een keuze --</option>
+                                    @foreach (var opt in panel.Options)
+                                    {
+                                        <option value="@opt.Value" selected="@(opt.Selected ? "selected" : null)">@opt.Text</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label">Aantal</label>
+                                <input class="form-control" type="number" name="Quantity" min="0" max="1000" value="@panel.Quantity" />
+                                <div class="form-text">Zet op 0 om te deselecteren.</div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary" type="submit" name="Command" value="select">Kies</button>
+                                @if (panel.SelectedItemId is not null)
+                                {
+                                    <button class="btn btn-outline-secondary" type="submit" name="Command" value="deselect">Deselecteer</button>
+                                }
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <span>Stuksprijs:</span>
+                        <strong>@(panel.UnitPrice?.ToString("C") ?? "-")</strong>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <span>Regel totaal:</span>
+                        <strong>@panel.LineTotal.ToString("C")</strong>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+
+
