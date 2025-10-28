@@ -1,0 +1,47 @@
+# --- .NET / Visual Studio / Rider ---
+## Build output
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+*.log
+
+## VS, VS Code, Rider
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.rsuser
+*.userosscache
+*_i.c
+*_p.c
+*.cache
+*.svclog
+_ReSharper*/
+*.DotSettings.user
+
+## NuGet
+# (with PackageReference, packages are in obj; keep .nupkg only if you publish)
+*.nupkg
+# project.assets.json is generated
+project.assets.json
+project.nuget.cache/
+
+## Publishing / dist
+**/publish/
+**/out/
+**/dist/
+
+## Front-end (if any)
+node_modules/
+
+## OS junk
+.DS_Store
+Thumbs.db
+
+## Local config you don’t want to commit
+appsettings.*.local.json
+
+## Uploaded files (keep placeholder)
+wwwroot/uploads/*
+!wwwroot/uploads/.gitkeep

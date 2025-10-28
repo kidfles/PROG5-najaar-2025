@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FestivalConfigurator.Domain", "FestivalConfigurator.Domain\FestivalConfigurator.Domain.csproj", "{672B73DB-AB3B-4B64-A95C-4A63FB54DA2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FestivalConfigurator.Infrastructure", "FestivalConfigurator.Infrastructure\FestivalConfigurator.Infrastructure.csproj", "{399C18F6-BD94-42BE-87FE-308AC7B694E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FestivalConfigurator.Web", "FestivalConfigurator.Web\FestivalConfigurator.Web.csproj", "{9F194C26-B15D-4B7C-A6D7-AD8736159F08}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{672B73DB-AB3B-4B64-A95C-4A63FB54DA2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{672B73DB-AB3B-4B64-A95C-4A63FB54DA2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{672B73DB-AB3B-4B64-A95C-4A63FB54DA2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{672B73DB-AB3B-4B64-A95C-4A63FB54DA2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{399C18F6-BD94-42BE-87FE-308AC7B694E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{399C18F6-BD94-42BE-87FE-308AC7B694E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{399C18F6-BD94-42BE-87FE-308AC7B694E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{399C18F6-BD94-42BE-87FE-308AC7B694E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F194C26-B15D-4B7C-A6D7-AD8736159F08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F194C26-B15D-4B7C-A6D7-AD8736159F08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F194C26-B15D-4B7C-A6D7-AD8736159F08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F194C26-B15D-4B7C-A6D7-AD8736159F08}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
