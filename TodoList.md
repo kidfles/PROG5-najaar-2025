@@ -66,23 +66,23 @@ Phase 4 — ViewModels & Ticket (CUSTOM, no scaffolding)
 
 Phase 5 — Image Handling
 
-- [ ] Choose image storage approach (file on disk in wwwroot, URL, or DB blob). Start with files/URLs; add sample icons per ItemType and a Festival logo
+- [x] Choose image storage approach (file on disk in wwwroot, URL, or DB blob). Start with files/URLs; add sample icons per ItemType and a Festival logo
 
-- [ ] Render icons on the Ticket per ItemType; render Festival logo on Ticket and Festival list
+- [x] Render icons on the Ticket per ItemType; render Festival logo on Ticket and Festival list
 
 Phase 6 — Deletion Behavior & Friendly Errors
 
-- [ ] Disable cascade delete (already configured) and verify FK constraints block unsafe deletes
+- [x] Disable cascade delete (already configured) and verify FK constraints block unsafe deletes
 
-- [ ] Catch FK exceptions on Delete for FESTIVAL/PACKAGE/ITEM and show a friendly Dutch error message in the UI
+- [x] Catch FK exceptions on Delete for FESTIVAL/PACKAGE/ITEM and show a friendly Dutch error message in the UI
 
 Phase 7 — Language, UX, and Polish
 
-- [ ] Dutch UI text everywhere (labels, buttons like “Kies”, messages). Code + DB naming in English
+- [x] Dutch UI text everywhere (labels, buttons like “Kies”, messages). Code + DB naming in English
 
-- [ ] Responsive layout with Bootstrap; clean list columns and Ticket layout (Nice to Have)
+- [x] Responsive layout with Bootstrap; clean list columns and Ticket layout (Nice to Have)
 
-- [ ] Display relevant columns in list views (Festival, Package, Item)
+- [x] Display relevant columns in list views (Festival, Package, Item)
 
 Phase 8 — LINQ Queries & Performance
 

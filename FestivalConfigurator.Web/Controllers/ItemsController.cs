@@ -170,13 +170,21 @@ namespace FestivalConfigurator.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var item = await _context.Items.FindAsync(id);
-            if (item != null)
+            if (item == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            try
             {
                 _context.Items.Remove(item);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (DbUpdateException)
+            {
+                TempData["Error"] = "Kan item niet verwijderen: het item is gebruikt in pakketten.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         private bool ItemExists(int id)

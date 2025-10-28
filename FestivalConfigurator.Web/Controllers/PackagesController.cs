@@ -153,15 +153,21 @@ namespace FestivalConfigurator.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var package = await _context.Packages.FindAsync(id);
-            if (package != null)
+            if (package == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            try
             {
                 _context.Packages.Remove(package);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index), new { festivalId = package.FestivalId });
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (DbUpdateException)
+            {
+                TempData["Error"] = "Kan pakket niet verwijderen: er zijn nog gekoppelde items.";
+                return RedirectToAction(nameof(Index), new { festivalId = package.FestivalId });
+            }
         }
 
         private bool PackageExists(int id)
