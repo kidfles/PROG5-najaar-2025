@@ -1,42 +1,53 @@
 @model IEnumerable<FestivalConfigurator.Domain.Package>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Pakketten";
+    var selectedFestivalId = ViewData["FestivalId"] as int?;
+    var selectedFestivalName = ViewData["FestivalName"] as string;
 }
 
 <h1>Pakketten</h1>
 
-<p>
-    <a class="btn btn-success" asp-action="Create">Nieuw</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Festival)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Festival.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Bewerken</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Verwijderen</a> |
-                <a class="btn btn-sm btn-success" asp-action="Ticket" asp-route-id="@item.Id">Ticket</a>
-            </td>
-        </tr>
+@if (!string.IsNullOrWhiteSpace(selectedFestivalName))
+{
+    <p class="text-muted">Toont pakketten voor <strong>@selectedFestivalName</strong>.</p>
 }
-    </tbody>
-</table>
+
+<p>
+    <a class="btn btn-success" asp-action="Create" asp-route-festivalId="@selectedFestivalId">Nieuw pakket</a>
+</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Er zijn nog geen pakketten gevonden.</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Festival)</th>
+                <th>@Html.DisplayNameFor(model => model.Name)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Festival.Name</td>
+                <td>@item.Name</td>
+                <td class="text-nowrap">
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-link p-0">Bewerken</a>
+                    <span class="text-muted">|</span>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-link p-0">Details</a>
+                    <span class="text-muted">|</span>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-link p-0 text-danger">Verwijderen</a>
+                    <span class="text-muted">|</span>
+                    <a class="btn btn-sm btn-success" asp-action="Ticket" asp-route-id="@item.Id">Ticket</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

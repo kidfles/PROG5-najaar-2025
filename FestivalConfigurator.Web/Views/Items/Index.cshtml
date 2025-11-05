@@ -8,12 +8,14 @@
 
 <form method="get" class="row g-3 mb-3">
     <div class="col-md-3">
+        @{
+            var selectedType = ViewData["CurrentType"] as ItemType?;
+        }
         <select name="type" class="form-select" onchange="this.form.submit()">
-            <option value="">-- ItemType --</option>
-            @foreach (FestivalConfigurator.Domain.ItemType t in Enum.GetValues(typeof(FestivalConfigurator.Domain.ItemType)))
+            <option value="" selected="@(selectedType is null ? "selected" : null)">Alle items</option>
+            @foreach (ItemType t in Enum.GetValues<ItemType>())
             {
-                var isSelected = (ViewData["CurrentType"]?.ToString() == t.ToString());
-                <option value="@t" selected="@(isSelected ? "selected" : null)">@t</option>
+                <option value="@t" selected="@(selectedType == t ? "selected" : null)">@t</option>
             }
         </select>
     </div>

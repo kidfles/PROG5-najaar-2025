@@ -26,7 +26,14 @@
             @Html.DisplayNameFor(model => model.Logo)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Logo)
+            @if (!string.IsNullOrWhiteSpace(Model.Logo))
+            {
+                <img src="@Model.Logo" alt="@Model.Name logo" class="img-fluid" style="max-height: 160px;" />
+            }
+            else
+            {
+                <span class="text-muted">Geen logo beschikbaar</span>
+            }
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Description)

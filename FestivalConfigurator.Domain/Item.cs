@@ -15,6 +15,7 @@ public sealed class Item
 
     [Display(Name = "Prijs")]
     [DataType(DataType.Currency)]
+    [Range(0, 100000, ErrorMessage = "De prijs kan niet negatief zijn.")]
     public decimal Price { get; set; }
 }
 

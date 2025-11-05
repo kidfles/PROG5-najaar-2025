@@ -1,11 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
-namespace FestivalConfigurator.Domain;
+namespace FestivalConfigurator.Web.Models;
 
-public sealed class Festival : IValidatableObject
+public sealed class FestivalFormViewModel : IValidatableObject
 {
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
     [Required, MaxLength(200)]
     [Display(Name = "Naam")]
@@ -15,12 +17,8 @@ public sealed class Festival : IValidatableObject
     [Display(Name = "Plaats")]
     public string Place { get; set; } = string.Empty;
 
-    [MaxLength(500)]
-    [Display(Name = "Logo")]
-    public string? Logo { get; set; }
-
-    [MaxLength(2000)]
     [Display(Name = "Beschrijving")]
+    [MaxLength(2000)]
     public string? Description { get; set; }
 
     [Display(Name = "Basisprijs")]
@@ -30,12 +28,16 @@ public sealed class Festival : IValidatableObject
 
     [Display(Name = "Startdatum")]
     [DataType(DataType.Date)]
-    public DateOnly StartDate { get; set; }
+    public DateOnly StartDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+
     [Display(Name = "Einddatum")]
     [DataType(DataType.Date)]
-    public DateOnly EndDate   { get; set; }
+    public DateOnly EndDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
 
-    public ICollection<Package> Packages { get; set; } = new List<Package>();
+    [Display(Name = "Logo (PNG)")]
+    public IFormFile? LogoFile { get; set; }
+
+    public string? ExistingLogoPath { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
@@ -47,5 +49,3 @@ public sealed class Festival : IValidatableObject
         }
     }
 }
-
-
