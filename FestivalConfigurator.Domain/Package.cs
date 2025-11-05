@@ -7,6 +7,7 @@ public sealed class Package
     public int Id { get; set; }
 
     [Display(Name = "Festival")]
+    [Range(1, int.MaxValue, ErrorMessage = "Selecteer een festival.")]
     public int FestivalId { get; set; }
     public Festival Festival { get; set; } = null!;
 

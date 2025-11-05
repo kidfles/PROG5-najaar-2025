@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +22,16 @@ namespace FestivalConfigurator.Web.Controllers
         public async Task<IActionResult> Index(int? festivalId)
         {
             ViewData["FestivalId"] = festivalId;
+
+            if (festivalId.HasValue)
+            {
+                var festivalName = await _context.Festivals
+                    .Where(f => f.Id == festivalId.Value)
+                    .Select(f => f.Name)
+                    .FirstOrDefaultAsync();
+                ViewData["FestivalName"] = festivalName;
+            }
+
             IQueryable<Package> query = _context.Packages.Include(p => p.Festival);
             if (festivalId.HasValue)
             {
@@ -42,37 +50,66 @@ namespace FestivalConfigurator.Web.Controllers
 
             var package = await _context.Packages
                 .Include(p => p.Festival)
+                .Include(p => p.PackageItems)
+                    .ThenInclude(pi => pi.Item)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (package == null)
             {
                 return NotFound();
             }
 
-            return View(package);
+            var items = package.PackageItems
+                .OrderBy(pi => pi.Item.ItemType)
+                .ThenBy(pi => pi.Item.Name)
+                .Select(pi => new PackageDetailsItemViewModel
+                {
+                    ItemName = pi.Item.Name,
+                    ItemType = pi.Item.ItemType,
+                    Quantity = pi.Quantity,
+                    UnitPrice = pi.Item.Price
+                })
+                .ToList();
+
+            var vm = new PackageDetailsViewModel
+            {
+                Id = package.Id,
+                Name = package.Name,
+                FestivalId = package.FestivalId,
+                FestivalName = package.Festival.Name,
+                FestivalPlace = package.Festival.Place,
+                Items = items,
+                TotalPrice = items.Sum(i => i.LineTotal)
+            };
+
+            return View(vm);
         }
 
         // GET: Packages/Create
-        public IActionResult Create(int? festivalId)
+        public async Task<IActionResult> Create(int? festivalId)
         {
-            ViewData["FestivalId"] = new SelectList(_context.Festivals, "Id", "Name", festivalId);
+            await PopulateFestivalSelectListAsync(festivalId);
             return View(new Package { FestivalId = festivalId ?? 0 });
         }
 
-        // POST: Packages/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FestivalId,Name")] Package package)
         {
-            if (ModelState.IsValid)
+            if (!await _context.Festivals.AnyAsync(f => f.Id == package.FestivalId))
             {
-                _context.Add(package);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), new { festivalId = package.FestivalId });
+                ModelState.AddModelError(nameof(Package.FestivalId), "Selecteer een bestaand festival.");
             }
-            ViewData["FestivalId"] = new SelectList(_context.Festivals, "Id", "Name", package.FestivalId);
-            return View(package);
+
+            if (!ModelState.IsValid)
+            {
+                await PopulateFestivalSelectListAsync(package.FestivalId);
+                return View(package);
+            }
+
+            _context.Add(package);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index), new { festivalId = package.FestivalId });
         }
 
         // GET: Packages/Edit/5
@@ -88,7 +125,7 @@ namespace FestivalConfigurator.Web.Controllers
             {
                 return NotFound();
             }
-            ViewData["FestivalId"] = new SelectList(_context.Festivals, "Id", "Name", package.FestivalId);
+            await PopulateFestivalSelectListAsync(package.FestivalId);
             return View(package);
         }
 
@@ -104,28 +141,34 @@ namespace FestivalConfigurator.Web.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!await _context.Festivals.AnyAsync(f => f.Id == package.FestivalId))
             {
-                try
-                {
-                    _context.Update(package);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PackageExists(package.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index), new { festivalId = package.FestivalId });
+                ModelState.AddModelError(nameof(Package.FestivalId), "Selecteer een bestaand festival.");
             }
-            ViewData["FestivalId"] = new SelectList(_context.Festivals, "Id", "Name", package.FestivalId);
-            return View(package);
+
+            if (!ModelState.IsValid)
+            {
+                await PopulateFestivalSelectListAsync(package.FestivalId);
+                return View(package);
+            }
+
+            try
+            {
+                _context.Update(package);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PackageExists(package.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index), new { festivalId = package.FestivalId });
         }
 
         // GET: Packages/Delete/5
@@ -152,13 +195,20 @@ namespace FestivalConfigurator.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var package = await _context.Packages.FindAsync(id);
+            var package = await _context.Packages
+                .Include(p => p.PackageItems)
+                .FirstOrDefaultAsync(p => p.Id == id);
             if (package == null)
             {
                 return RedirectToAction(nameof(Index));
             }
             try
             {
+                if (package.PackageItems.Any())
+                {
+                    _context.PackageItems.RemoveRange(package.PackageItems);
+                }
+
                 _context.Packages.Remove(package);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index), new { festivalId = package.FestivalId });
@@ -168,6 +218,16 @@ namespace FestivalConfigurator.Web.Controllers
                 TempData["Error"] = "Kan pakket niet verwijderen: er zijn nog gekoppelde items.";
                 return RedirectToAction(nameof(Index), new { festivalId = package.FestivalId });
             }
+        }
+
+        private async Task PopulateFestivalSelectListAsync(int? selectedId = null)
+        {
+            var festivals = await _context.Festivals
+                .AsNoTracking()
+                .OrderBy(f => f.Name)
+                .ToListAsync();
+
+            ViewData["FestivalId"] = new SelectList(festivals, "Id", "Name", selectedId);
         }
 
         private bool PackageExists(int id)

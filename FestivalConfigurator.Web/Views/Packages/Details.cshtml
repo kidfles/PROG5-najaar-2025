@@ -1,30 +1,59 @@
-@model FestivalConfigurator.Domain.Package
+@model FestivalConfigurator.Web.Models.PackageDetailsViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Pakketdetails";
 }
 
-<h1>Details</h1>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="mb-1">@Model.Name</h1>
+        <p class="text-muted mb-0">
+            @Model.FestivalName
+            @if (!string.IsNullOrWhiteSpace(Model.FestivalPlace))
+            {
+                <span class="ms-1">(@Model.FestivalPlace)</span>
+            }
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Bewerken</a>
+        <a asp-action="Index" asp-route-festivalId="@Model.FestivalId" class="btn btn-secondary">Terug</a>
+    </div>
+</div>
 
-<div>
-    <h4>Package</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Festival)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Festival.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+@if (Model.Items.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Type</th>
+                <th class="text-end">Aantal</th>
+                <th class="text-end">Prijs</th>
+                <th class="text-end">Subtotaal</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.ItemName</td>
+                <td>@item.ItemType</td>
+                <td class="text-end">@item.Quantity</td>
+                <td class="text-end">@item.UnitPrice.ToString("C")</td>
+                <td class="text-end">@item.LineTotal.ToString("C")</td>
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="4" class="text-end">Totaal items</th>
+                <th class="text-end">@Model.TotalPrice.ToString("C")</th>
+            </tr>
+        </tfoot>
+    </table>
+}
+else
+{
+    <div class="alert alert-info">Dit pakket bevat nog geen items.</div>
+}
