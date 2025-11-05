@@ -11,9 +11,16 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="mb-3">
-                <label asp-for="FestivalId" class="form-label"></label>
+                <label asp-for="FestivalId" class="form-label"></label> 
                 <select asp-for="FestivalId" class="form-select" asp-items="ViewBag.FestivalId">
-                    <option value="" @(Model.FestivalId <= 0 ? "selected" : null)>Selecteer een festival...</option>
+@if (Model?.FestivalId <= 0)
+{
+                    <option value="" selected>Selecteer een festival...</option>
+}
+else
+{
+                    <option value="">Selecteer een festival...</option>
+}
                 </select>
                 <span asp-validation-for="FestivalId" class="text-danger"></span>
             </div>

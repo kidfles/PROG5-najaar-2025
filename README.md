@@ -9,11 +9,11 @@ Snelle start
 2) Start SQL Server in Docker (eerste keer)
 ```
 docker pull mcr.microsoft.com/mssql/server:2022-latest
-docker run -d --name festival-sql \
-  -e "ACCEPT_EULA=Y" \
-  -e "MSSQL_SA_PASSWORD=Pass@word1!" \
-  -p 1433:1433 \
-  -v mssql-data:/var/opt/mssql \
+docker run -d --name festival-sql `
+  -e "ACCEPT_EULA=Y" `
+  -e "MSSQL_SA_PASSWORD=Pass@word1!" `
+  -p 1433:1433 `
+  -v mssql-data:/var/opt/mssql `
   mcr.microsoft.com/mssql/server:2022-latest
 ```
 
