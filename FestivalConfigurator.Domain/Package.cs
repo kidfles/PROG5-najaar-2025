@@ -4,18 +4,20 @@ namespace FestivalConfigurator.Domain;
 
 public sealed class Package
 {
-    public int Id { get; set; }
+     public int Id { get; set; }
 
     [Display(Name = "Festival")]
     [Range(1, int.MaxValue, ErrorMessage = "Selecteer een festival.")]
     public int FestivalId { get; set; }
-    public Festival Festival { get; set; } = null!;
+
+    public Festival? Festival { get; set; }
 
     [Required, MaxLength(200)]
     [Display(Name = "Naam")]
     public string Name { get; set; } = string.Empty;
 
-    public ICollection<PackageItem> PackageItems { get; set; } = new List<PackageItem>();
+    public ICollection<PackageItem> PackageItems { get; set; }
+        = new List<PackageItem>();
 }
 
 
