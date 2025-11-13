@@ -95,22 +95,27 @@ namespace FestivalConfigurator.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FestivalId,Name")] Package package)
-        {
-            if (!await _context.Festivals.AnyAsync(f => f.Id == package.FestivalId))
-            {
-                ModelState.AddModelError(nameof(Package.FestivalId), "Selecteer een bestaand festival.");
+            { 
+                if (!await _context.Festivals.AnyAsync(f => f.Id == package.FestivalId))
+                {
+                    ModelState.AddModelError(nameof(Package.FestivalId), "Selecteer een bestaand festival.");
+                }
+
+                // Als invalid: opnieuw dropdown vullen en view tonen
+                if (!ModelState.IsValid)
+                {
+                    await PopulateFestivalSelectListAsync(package.FestivalId);
+                    return View(package);
+                }
+
+                // Opslaan
+                _context.Add(package);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index),
+                    new { festivalId = package.FestivalId });
             }
 
-            if (!ModelState.IsValid)
-            {
-                await PopulateFestivalSelectListAsync(package.FestivalId);
-                return View(package);
-            }
-
-            _context.Add(package);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index), new { festivalId = package.FestivalId });
-        }
 
         // GET: Packages/Edit/5
         public async Task<IActionResult> Edit(int? id)
