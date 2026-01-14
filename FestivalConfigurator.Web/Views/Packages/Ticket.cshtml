@@ -9,6 +9,9 @@
 <div class="container py-3">
     <div class="row mb-3">
         <div class="col">
+            <div class="mb-2">
+                <a asp-action="Index" asp-route-festivalId="@Model.FestivalId" class="btn btn-outline-secondary btn-sm">&larr; Terug naar pakketten</a>
+            </div>
             <h2>Ticket voor @Model.FestivalName <small class="text-muted">(@Model.PackageName)</small></h2>
             <div class="text-muted">@Model.FestivalPlace • @Model.StartDate.ToString("dd-MM-yyyy") – @Model.EndDate.ToString("dd-MM-yyyy")</div>
         </div>
