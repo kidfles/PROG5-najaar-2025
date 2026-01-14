@@ -86,8 +86,8 @@ namespace FestivalConfigurator.Web.Controllers
                 Id = package.Id,
                 Name = package.Name,
                 FestivalId = package.FestivalId,
-                FestivalName = package.Festival.Name,
-                FestivalPlace = package.Festival.Place,
+                FestivalName = package.Festival!.Name,
+                FestivalPlace = package.Festival!.Place,
                 Items = items,
                 TotalPrice = items.Sum(i => i.LineTotal)
             };
@@ -286,13 +286,13 @@ namespace FestivalConfigurator.Web.Controllers
             PackageId = pkg.Id,
             PackageName = pkg.Name,
             FestivalId = pkg.FestivalId,
-            FestivalName = pkg.Festival.Name,
-            FestivalPlace = pkg.Festival.Place,
-            FestivalLogo = pkg.Festival.Logo,
-            FestivalDescription = pkg.Festival.Description,
-            StartDate = pkg.Festival.StartDate,
-            EndDate = pkg.Festival.EndDate,
-            BasicPrice = pkg.Festival.BasicPrice,
+            FestivalName = pkg.Festival!.Name,
+            FestivalPlace = pkg.Festival!.Place,
+            FestivalLogo = pkg.Festival!.Logo,
+            FestivalDescription = pkg.Festival!.Description,
+            StartDate = pkg.Festival!.StartDate,
+            EndDate = pkg.Festival!.EndDate,
+            BasicPrice = pkg.Festival!.BasicPrice,
         };
 
         // Loop through every ItemType (Tent, Ticket, etc.) to build the panels.
