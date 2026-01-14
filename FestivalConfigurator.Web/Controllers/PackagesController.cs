@@ -9,6 +9,7 @@ using FestivalConfigurator.Web.Models;
 
 namespace FestivalConfigurator.Web.Controllers
 {
+    // This is the main controller that handles everything related to Packages.
     public class PackagesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,10 +20,15 @@ namespace FestivalConfigurator.Web.Controllers
         }
 
         // GET: Packages
+        // Shows the big list of packages. You can filter them by clicking a festival in the dropdown.
         public async Task<IActionResult> Index(int? festivalId)
         {
             ViewData["FestivalId"] = festivalId;
 
+            // Fills up the dropdown list so you can pick a festival.
+            ViewData["AllFestivals"] = new SelectList(await _context.Festivals.OrderBy(f => f.Name).ToListAsync(), "Id", "Name", festivalId);
+
+            // If you picked a festival, we grab its name to show it off.
             if (festivalId.HasValue)
             {
                 var festivalName = await _context.Festivals
@@ -33,6 +39,7 @@ namespace FestivalConfigurator.Web.Controllers
             }
 
             IQueryable<Package> query = _context.Packages.Include(p => p.Festival);
+            // Checking if we need to filter the list.
             if (festivalId.HasValue)
             {
                 query = query.Where(p => p.FestivalId == festivalId.Value);
@@ -41,6 +48,7 @@ namespace FestivalConfigurator.Web.Controllers
         }
 
         // GET: Packages/Details/5
+        // Grabs all the nitty-gritty details for a single package.
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -48,6 +56,7 @@ namespace FestivalConfigurator.Web.Controllers
                 return NotFound();
             }
 
+            // Fetch the package with all its related data (festival, items involved).
             var package = await _context.Packages
                 .Include(p => p.Festival)
                 .Include(p => p.PackageItems)
@@ -59,6 +68,7 @@ namespace FestivalConfigurator.Web.Controllers
                 return NotFound();
             }
 
+            // Organize the items nicely by type and name.
             var items = package.PackageItems
                 .OrderBy(pi => pi.Item.ItemType)
                 .ThenBy(pi => pi.Item.Name)
@@ -76,8 +86,8 @@ namespace FestivalConfigurator.Web.Controllers
                 Id = package.Id,
                 Name = package.Name,
                 FestivalId = package.FestivalId,
-                FestivalName = package.Festival.Name,
-                FestivalPlace = package.Festival.Place,
+                FestivalName = package.Festival!.Name,
+                FestivalPlace = package.Festival!.Place,
                 Items = items,
                 TotalPrice = items.Sum(i => i.LineTotal)
             };
@@ -86,6 +96,7 @@ namespace FestivalConfigurator.Web.Controllers
         }
 
         // GET: Packages/Create
+        // Sets up the form to create a brand new package.
         public async Task<IActionResult> Create(int? festivalId)
         {
             await PopulateFestivalSelectListAsync(festivalId);
@@ -94,30 +105,33 @@ namespace FestivalConfigurator.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        // This actually saves the new package to the database.
         public async Task<IActionResult> Create([Bind("Id,FestivalId,Name")] Package package)
-            { 
-                if (!await _context.Festivals.AnyAsync(f => f.Id == package.FestivalId))
-                {
-                    ModelState.AddModelError(nameof(Package.FestivalId), "Selecteer een bestaand festival.");
-                }
-
-                // Als invalid: opnieuw dropdown vullen en view tonen
-                if (!ModelState.IsValid)
-                {
-                    await PopulateFestivalSelectListAsync(package.FestivalId);
-                    return View(package);
-                }
-
-                // Opslaan
-                _context.Add(package);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index),
-                    new { festivalId = package.FestivalId });
+        { 
+            // Double check that the festival actually exists.
+            if (!await _context.Festivals.AnyAsync(f => f.Id == package.FestivalId))
+            {
+                ModelState.AddModelError(nameof(Package.FestivalId), "Selecteer een bestaand festival.");
             }
+
+            // If something's wrong, we send them back to the drawing board (the form).
+            if (!ModelState.IsValid)
+            {
+                await PopulateFestivalSelectListAsync(package.FestivalId);
+                return View(package);
+            }
+
+            // Save it!
+            _context.Add(package);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index),
+                new { festivalId = package.FestivalId });
+        }
 
 
         // GET: Packages/Edit/5
+        // Opens the form to edit an existing package.
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -139,6 +153,7 @@ namespace FestivalConfigurator.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        // Saves the changes you made to the package.
         public async Task<IActionResult> Edit(int id, [Bind("Id,FestivalId,Name")] Package package)
         {
             if (id != package.Id)
@@ -164,6 +179,7 @@ namespace FestivalConfigurator.Web.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
+                // Just checking if it wasn't deleted by someone else in the meantime.
                 if (!PackageExists(package.Id))
                 {
                     return NotFound();
@@ -177,6 +193,7 @@ namespace FestivalConfigurator.Web.Controllers
         }
 
         // GET: Packages/Delete/5
+        // Asks "Are you sure?" before deleting a package.
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -198,6 +215,7 @@ namespace FestivalConfigurator.Web.Controllers
         // POST: Packages/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        // This is where the package actually gets deleted. Bye bye!
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var package = await _context.Packages
@@ -209,6 +227,7 @@ namespace FestivalConfigurator.Web.Controllers
             }
             try
             {
+                // We clear out the items in the package first.
                 if (package.PackageItems.Any())
                 {
                     _context.PackageItems.RemoveRange(package.PackageItems);
@@ -225,6 +244,7 @@ namespace FestivalConfigurator.Web.Controllers
             }
         }
 
+        // Helper to fill that festival dropdown list we use everywhere.
         private async Task PopulateFestivalSelectListAsync(int? selectedId = null)
         {
             var festivals = await _context.Festivals
@@ -235,6 +255,7 @@ namespace FestivalConfigurator.Web.Controllers
             ViewData["FestivalId"] = new SelectList(festivals, "Id", "Name", selectedId);
         }
 
+        // quick check to see if a package exists.
         private bool PackageExists(int id)
         {
             return _context.Packages.Any(e => e.Id == id);
@@ -242,6 +263,9 @@ namespace FestivalConfigurator.Web.Controllers
 
     // GET: /Packages/Ticket/5
     [HttpGet]
+    // This helper grabs the ticket details for you. It checks the database for the package 
+    // and includes all the extra goodies (items & festival info).
+    // If the package is missing, it just shrugs and returns a Not Found.
     public async Task<IActionResult> Ticket(int id)
     {
         var pkg = await _context.Packages
@@ -251,6 +275,7 @@ namespace FestivalConfigurator.Web.Controllers
             .FirstOrDefaultAsync(p => p.Id == id);
         if (pkg == null) return NotFound("Pakket niet gevonden.");
 
+        // Grabbing all the available items, grouped by type so we can display them nicely.
         var catalogs = await _context.Items
             .AsNoTracking()
             .GroupBy(i => i.ItemType)
@@ -261,19 +286,21 @@ namespace FestivalConfigurator.Web.Controllers
             PackageId = pkg.Id,
             PackageName = pkg.Name,
             FestivalId = pkg.FestivalId,
-            FestivalName = pkg.Festival.Name,
-            FestivalPlace = pkg.Festival.Place,
-            FestivalLogo = pkg.Festival.Logo,
-            FestivalDescription = pkg.Festival.Description,
-            StartDate = pkg.Festival.StartDate,
-            EndDate = pkg.Festival.EndDate,
-            BasicPrice = pkg.Festival.BasicPrice,
+            FestivalName = pkg.Festival!.Name,
+            FestivalPlace = pkg.Festival!.Place,
+            FestivalLogo = pkg.Festival!.Logo,
+            FestivalDescription = pkg.Festival!.Description,
+            StartDate = pkg.Festival!.StartDate,
+            EndDate = pkg.Festival!.EndDate,
+            BasicPrice = pkg.Festival!.BasicPrice,
         };
 
+        // Loop through every ItemType (Tent, Ticket, etc.) to build the panels.
         foreach (ItemType t in Enum.GetValues<ItemType>())
         {
             var existing = pkg.PackageItems.FirstOrDefault(pi => pi.Item.ItemType == t);
 
+            // Create a dropdown list for this specific item type.
             var options = catalogs.TryGetValue(t, out var list)
                 ? list.Select(i => new SelectListItem
                 {
@@ -295,6 +322,7 @@ namespace FestivalConfigurator.Web.Controllers
             });
         }
 
+        // Calculate the total price: basic festival price + cost of selected items.
         vm.PackageTotal = vm.BasicPrice + pkg.PackageItems.Sum(pi => pi.Item.Price * pi.Quantity);
 
         return View(vm);
@@ -303,6 +331,8 @@ namespace FestivalConfigurator.Web.Controllers
     // POST: /Packages/Ticket
     [HttpPost]
     [ValidateAntiForgeryToken]
+    // Consumes the logic for when you update the ticket (add/remove items).
+    // This method handles all the changes you make to your package's items (adding, removing, or changing quantities).
     public async Task<IActionResult> Ticket(TicketPostModel form)
     {
         var pkg = await _context.Packages
@@ -314,6 +344,7 @@ namespace FestivalConfigurator.Web.Controllers
 
         var existing = pkg.PackageItems.FirstOrDefault(pi => pi.Item.ItemType == form.Type);
 
+        // If command is 'deselect' or no valid item selected, we clear the selection.
         if (string.Equals(form.Command, "deselect", StringComparison.OrdinalIgnoreCase) || form.ItemId is null || form.Quantity <= 0)
         {
             if (existing != null)
@@ -321,6 +352,7 @@ namespace FestivalConfigurator.Web.Controllers
         }
         else
         {
+            // Otherwise, we fetch the new item to make sure it exists and matches the type.
             var item = await _context.Items.FirstOrDefaultAsync(i => i.Id == form.ItemId);
             if (item == null) return BadRequest("Dit item bestaat niet meer; je selectie is gewist.");
             if (item.ItemType != form.Type) return BadRequest("Ongeldige selectie voor dit type.");
@@ -328,6 +360,7 @@ namespace FestivalConfigurator.Web.Controllers
             if (existing != null)
                 _context.PackageItems.Remove(existing);
 
+            // Add the new selection to the package.
             _context.PackageItems.Add(new PackageItem
             {
                 PackageId = pkg.Id,
