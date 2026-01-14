@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FestivalConfigurator.Domain;
 
+// A bundle of fun (and items) for a specific festival.
 public sealed class Package
 {
      public int Id { get; set; }

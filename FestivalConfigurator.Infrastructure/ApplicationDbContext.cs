@@ -3,8 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FestivalConfigurator.Infrastructure;
 
+// This acts as the bridge to our database.
 public sealed class ApplicationDbContext : DbContext
 {
+    // The tables in our database.
     public DbSet<Festival> Festivals => Set<Festival>();
     public DbSet<Package>  Packages  => Set<Package>();
     public DbSet<Item>     Items     => Set<Item>();
@@ -12,11 +14,12 @@ public sealed class ApplicationDbContext : DbContext
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
+    // This is where we configure how the database looks (relationships, constraints, etc).
     protected override void OnModelCreating(ModelBuilder b)
     {
         base.OnModelCreating(b);
 
-        // Composite key for join table
+        // Making sure we don't have duplicate links between packages and items.
         b.Entity<PackageItem>().HasKey(pi => new { pi.PackageId, pi.ItemId });
 
         // Relationships
@@ -53,7 +56,7 @@ public sealed class ApplicationDbContext : DbContext
         foreach (var fk in b.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             fk.DeleteBehavior = DeleteBehavior.Restrict;
 
-        // Seed data (Phase 2)
+        // Seed data: putting some initial info into the database so it's not empty.
         b.Entity<Festival>().HasData(new Festival
         {
             Id = 1,

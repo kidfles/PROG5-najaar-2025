@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FestivalConfigurator.Domain;
 
+// Represents a festival in the system.
 public sealed class Festival : IValidatableObject
 {
     public int Id { get; set; }
@@ -37,6 +38,7 @@ public sealed class Festival : IValidatableObject
 
     public ICollection<Package> Packages { get; set; } = new List<Package>();
 
+    // Validation to make sure the end date isn't before the start date. That would be weird.
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         if (EndDate < StartDate)

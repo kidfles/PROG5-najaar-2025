@@ -3,6 +3,7 @@ using FestivalConfigurator.Domain;
 
 namespace FestivalConfigurator.Web.Models;
 
+// Holds all the info to show a package's details on the screen.
 public sealed class PackageDetailsViewModel
 {
     public int Id { get; set; }
@@ -14,6 +15,7 @@ public sealed class PackageDetailsViewModel
     public decimal TotalPrice { get; set; }
 }
 
+// A little helper to show one line item in the package details.
 public sealed class PackageDetailsItemViewModel
 {
     public string ItemName { get; set; } = string.Empty;

@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FestivalConfigurator.Domain;
 
+// Basic building block for packages. Can be a tent, a ticket, etc.
 public sealed class Item
 {
     public int Id { get; set; }

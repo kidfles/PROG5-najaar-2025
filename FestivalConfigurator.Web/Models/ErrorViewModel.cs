@@ -1,5 +1,6 @@
 namespace FestivalConfigurator.Web.Models;
 
+// Used to show error info.
 public class ErrorViewModel
 {
     public string? RequestId { get; set; }
