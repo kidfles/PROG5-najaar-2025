@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FestivalConfigurator.Web.Controllers
 {
+    // Handles everything related to Festivals. Creating, editing, you name it.
     public class FestivalsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,12 +25,14 @@ namespace FestivalConfigurator.Web.Controllers
         }
 
         // GET: Festivals
+        // Shows a list of all the festivals we have.
         public async Task<IActionResult> Index()
         {
             return View(await _context.Festivals.ToListAsync());
         }
 
         // GET: Festivals/Details/5
+        // Shows the details for one specific festival.
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -48,6 +51,7 @@ namespace FestivalConfigurator.Web.Controllers
         }
 
         // GET: Festivals/Create
+        // Sets up the form to add a new festival.
         public IActionResult Create()
         {
             var today = DateOnly.FromDateTime(DateTime.Today);
@@ -61,6 +65,8 @@ namespace FestivalConfigurator.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        // This accepts the form data and saves the new festival.
+        // Also handles the logo upload.
         public async Task<IActionResult> Create(FestivalFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -68,9 +74,11 @@ namespace FestivalConfigurator.Web.Controllers
                 return View(model);
             }
 
+            // Try to save the logo if one was uploaded.
             var (logoSaved, logoPath) = await TrySaveLogoAsync(model.LogoFile);
             if (!logoSaved)
             {
+                // If the logo failed (e.g. wrong format), we complain and show the form again.
                 model.ExistingLogoPath = null;
                 return View(model);
             }
@@ -92,6 +100,7 @@ namespace FestivalConfigurator.Web.Controllers
         }
 
         // GET: Festivals/Edit/5
+        // Opens the form to edit an existing festival.
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -122,6 +131,7 @@ namespace FestivalConfigurator.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        // Saves the changes to the festival.
         public async Task<IActionResult> Edit(int id, FestivalFormViewModel model)
         {
             if (id != model.Id)
@@ -140,6 +150,7 @@ namespace FestivalConfigurator.Web.Controllers
                 return NotFound();
             }
 
+            // Check if there's a new logo to save.
             var (logoSaved, logoPath) = await TrySaveLogoAsync(model.LogoFile);
             if (!logoSaved)
             {
@@ -153,6 +164,7 @@ namespace FestivalConfigurator.Web.Controllers
             festival.BasicPrice = model.BasicPrice;
             festival.StartDate = model.StartDate;
             festival.EndDate = model.EndDate;
+            // Only overwrite the logo if a new one was actually uploaded.
             festival.Logo = logoPath ?? festival.Logo;
 
             try
@@ -174,6 +186,7 @@ namespace FestivalConfigurator.Web.Controllers
         }
 
         // GET: Festivals/Delete/5
+        // Asks if you're sure about deleting this festival.
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -194,6 +207,7 @@ namespace FestivalConfigurator.Web.Controllers
         // POST: Festivals/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        // This actually wipes the festival from the database.
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var festival = await _context.Festivals.FindAsync(id);
@@ -209,11 +223,14 @@ namespace FestivalConfigurator.Web.Controllers
             }
             catch (DbUpdateException)
             {
+                // Can't delete if there are packages linked to it.
                 TempData["Error"] = "Kan festival niet verwijderen: er zijn nog gekoppelde pakketten of items.";
                 return RedirectToAction(nameof(Index));
             }
         }
 
+        // Helper to save the uploaded logo file to the wwwroot/img/logos folder.
+        // Returns true if success or empty, false if invalid format.
         private async Task<(bool Saved, string? Path)> TrySaveLogoAsync(IFormFile? file)
         {
             if (file == null || file.Length == 0)
@@ -221,6 +238,7 @@ namespace FestivalConfigurator.Web.Controllers
                 return (true, null);
             }
 
+            // We only like PNGs here.
             var isPng = string.Equals(file.ContentType, "image/png", StringComparison.OrdinalIgnoreCase)
                         || string.Equals(Path.GetExtension(file.FileName), ".png", StringComparison.OrdinalIgnoreCase);
 
@@ -233,6 +251,7 @@ namespace FestivalConfigurator.Web.Controllers
             var logosFolder = Path.Combine(_environment.WebRootPath, "img", "logos");
             Directory.CreateDirectory(logosFolder);
 
+            // Give it a unique name so we don't overwrite other stuff.
             var fileName = $"{Guid.NewGuid():N}.png";
             var fullPath = Path.Combine(logosFolder, fileName);
 
@@ -242,6 +261,7 @@ namespace FestivalConfigurator.Web.Controllers
             return (true, $"/img/logos/{fileName}");
         }
 
+        // Check if a festival exists by ID.
         private bool FestivalExists(int id)
         {
             return _context.Festivals.Any(e => e.Id == id);

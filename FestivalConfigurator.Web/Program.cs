@@ -14,7 +14,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 
 var app = builder.Build();
 
-// ----- Culture fix toevoegen HIER -----
+// Tells the app to use Dutch formatting (like commas for decimals).
 var cultureInfo = new CultureInfo("nl-NL");
 
 app.UseRequestLocalization(new RequestLocalizationOptions
@@ -23,7 +23,6 @@ app.UseRequestLocalization(new RequestLocalizationOptions
     SupportedCultures = new List<CultureInfo> { cultureInfo },
     SupportedUICultures = new List<CultureInfo> { cultureInfo }
 });
-// --------------------------------------
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

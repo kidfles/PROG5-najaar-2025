@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FestivalConfigurator.Web.Models;
 
+// This is the big one for the ticket page. Keeps track of everything.
 public sealed class TicketViewModel
 {
     public int PackageId { get; set; }
@@ -23,6 +24,7 @@ public sealed class TicketViewModel
     public List<TicketPanelViewModel> Panels { get; set; } = new();
 }
 
+// Represents one "square" on the ticket page, like deciding which tent you want.
 public sealed class TicketPanelViewModel
 {
     public ItemType Type { get; set; }
@@ -48,6 +50,7 @@ public sealed class TicketPanelViewModel
     public string? IconPath { get; set; }
 }
 
+// Data that gets sent back to the server when you click something on the ticket page.
 public sealed class TicketPostModel
 {
     [Required]

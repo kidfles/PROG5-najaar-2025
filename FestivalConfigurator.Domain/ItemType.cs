@@ -1,5 +1,6 @@
 namespace FestivalConfigurator.Domain;
 
+// Categories for the items.
 public enum ItemType
 {
     Camping,

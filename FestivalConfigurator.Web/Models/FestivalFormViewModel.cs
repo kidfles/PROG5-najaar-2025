@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace FestivalConfigurator.Web.Models;
 
+// This is the form we use to create or edit a festival.
 public sealed class FestivalFormViewModel : IValidatableObject
 {
     public int? Id { get; set; }

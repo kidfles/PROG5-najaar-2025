@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FestivalConfigurator.Domain;
 
+// Link between a package and an item. Says "This package has 5 of these tents".
 public sealed class PackageItem
 {
     public int PackageId { get; set; }
